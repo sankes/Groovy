@@ -1,4 +1,4 @@
-package com.shankes.util.json;
+package com.shankes.gradle.util.json;
 
 /**
  * 作者： yanshili

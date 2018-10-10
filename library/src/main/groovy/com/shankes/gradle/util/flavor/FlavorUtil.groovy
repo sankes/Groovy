@@ -1,4 +1,4 @@
-package com.shankes.util.flavor
+package com.shankes.gradle.util.flavor
 
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle

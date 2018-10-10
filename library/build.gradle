@@ -1,6 +1,8 @@
-//apply plugin: 'java-library'
-apply plugin: 'groovy'
+// 应用插件
+apply plugin: "groovy"
+apply plugin: "maven"
 
+// 添加依赖
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -10,3 +12,26 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+// 代码仓库
+repositories {
+    jcenter()
+}
+
+group = 'com.shankes.gradle.plugin' // 组名
+version = '1.0.0' // 版本
+
+// 上传到本地代码库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+            pom.groupId = 'com.shankes.gradle.plugin' // 组名
+            pom.artifactId = 'config' // 插件名
+            pom.version = '1.0.0' // 版本号
+        }
+    }
+}
+
+// 应用插件
+apply from: '../bintray.gradle'

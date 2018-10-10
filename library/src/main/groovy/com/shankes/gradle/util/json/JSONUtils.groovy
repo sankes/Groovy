@@ -1,4 +1,4 @@
-package com.shankes.util.json
+package com.shankes.gradle.util.json
 
 import groovy.json.JsonSlurper
 import org.gradle.api.DefaultTask

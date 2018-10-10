@@ -1,4 +1,4 @@
-package com.shankes.plugin
+package com.shankes.gradle.plugin
 
 /**
  * 复制文件插件   Extension

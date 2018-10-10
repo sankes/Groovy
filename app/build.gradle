@@ -1,5 +1,19 @@
 apply plugin: 'com.android.application'
 
+// 添加本地仓库依赖
+buildscript{
+    repositories{
+        maven{
+            url uri('../repo')
+        }
+    }
+    dependencies{
+        classpath 'com.shankes.gradle.plugin:config:1.0.0'
+    }
+}
+// 引用插件
+apply plugin: 'configPlugin'
+
 android {
     compileSdkVersion 26
     defaultConfig {
