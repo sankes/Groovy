@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 def baseUrl = 'https://github.com/sankes'
 def siteUrl = baseUrl
 def gitUrl = "${baseUrl}/Groovy"
-def issueUrl = "${baseUrl}/issues"
+def issueUrl = "${gitUrl}/issues"
 
 install {
     repositories {
