@@ -1,64 +1,77 @@
-// 应用插件
-apply plugin: 'com.jfrog.bintray'
+// 上传插件到jcenter，在插件模块的build文件中引入即可
+
 apply plugin: 'maven-publish'
 
+//源代码打包任务
+task sourcesJar(type: Jar) {
+//    baseName 'test'
+    classifier 'sources'//分类器,区分其他jar包
+    from sourceSets.main.allSource
+}
 
-def baseUrl = 'https://github.com/sankes'
-def siteUrl = baseUrl
-def gitUrl = "${baseUrl}/Groovy"
-def issueUrl = "${gitUrl}/issues"
+//文档包任务
+task docJar(type: Jar, dependsOn: [javadoc, groovydoc]) {
+//    baseName 'test'
+    classifier 'doc'//分类器,区分其他jar包
+    from javadoc.destinationDir, groovydoc.destinationDir
+}
 
-install {
-    repositories {
-        mavenInstaller {
-            // This generates POM.xml with proper paramters
-            pom.project {
+//配置工程工件,也就是jar产出的配置
+artifacts {
+    archives sourcesJar
+    archives docJar
+}
 
-                //添加项目描述
-                name 'Gradle Config Plugin for Android'
-                url siteUrl
+group = 'com.shankes.gradle.plugin' // 组名
+version = '1.0.0' // 版本
 
-                //设置开源证书信息
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                //添加开发者信息
-                developers {
-                    developer {
-                        name 'shankes'
-                        email '512925636@qq.com'
-                    }
-                }
+//上传配置
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+            //如果不指定，默认就是工程名
+            artifactId 'configPlugin'
 
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
+            artifact sourcesJar
+            artifact docJar
+
+            //pom文件配置
+            pom.withXml {
+                def root = asNode()
+                def licensesNode = root.appendNode('licenses').appendNode('license')
+                licensesNode.appendNode('name', 'Apache License, Version 2.0')
+                licensesNode.appendNode('url', 'https://www.apache.org/licenses/LICENSE-2.0.txt')
+                licensesNode.appendNode('distribution', 'repo')
+                licensesNode.appendNode('comments', 'A business-friendly OSS license')
             }
         }
-
     }
 }
 
-//配置上传Bintray相关信息
-bintray {
-    user = BINTRAY_USER
-    key = BINTRAY_KEY
+apply plugin: 'com.jfrog.bintray'
 
-    configurations = ['archives']
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def siteUrl = 'https://github.com/sankes/Groovy'   // 项目的主页
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    //上传的内容
+    publications = ['plugin']
     pkg {
-        repo = 'maven' // 上传到中央仓库的名称
-        name = 'configPlugin' // 上传到jcenter 的项目名称
-        desc = 'gradle.plugin' // 项目描述
-        websiteUrl = siteUrl
-        issueTrackerUrl = issueUrl
-        vcsUrl = gitUrl
-        labels = ['gradle', 'plugin']
-        licenses = ['Apache-2.0']
-        publish = true
+        repo = 'maven'//需要上传的仓库名
+        name = 'configPlugin'//上传到jcenter的项目名
+        //userOrg = 'bintray_user'//可选的,不传的话默认是上面的user
+        licenses = ['Apache-2.0']//开源许可
+        //这里的地址是不会验证的,随便输入都可以,不配置也可以
+        vcsUrl = siteUrl
+        version {
+            //name = '1.0-Final'//使用外面的version
+            desc = 'gradle plugin for configuration files'
+            released = new Date()
+            vcsTag = '1.0.0'//版本控制里面的版本控制,比如svn,git
+            attributes = ['gradle-plugin': 'configPlugin']
+        }
     }
 }
