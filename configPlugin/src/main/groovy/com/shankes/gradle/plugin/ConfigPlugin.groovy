@@ -1,5 +1,6 @@
 package com.shankes.gradle.plugin
 
+import com.shankes.gradle.util.flavor.FlavorUtil
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -18,8 +19,9 @@ class ConfigPlugin implements Plugin<Project> {
             println("------------------------------- config copy start -------------------------------")
             project.copy {
                 // 源文件夹
-                println("------------------------------- config copy from: " + project['configPlugin'].srcDir + " -------------------------------")
-                from project['configPlugin'].srcDir
+                def srcDir = 'src' + File.separator + FlavorUtil.getCurrentFlavor(project) + File.separator + project['configPlugin'].srcDir
+                println("------------------------------- config copy from: " + srcDir + " -------------------------------")
+                from srcDir
 
                 // 包含的文件名匹配规则
                 println("------------------------------- config copy include: " + project['configPlugin'].includePattern + " -------------------------------")

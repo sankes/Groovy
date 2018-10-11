@@ -8,10 +8,9 @@ package com.shankes.gradle.plugin
  */
 class ConfigPluginExtension {
     /**
-     * 复制源文件夹
-     * 当前风味下的config文件夹
+     * 复制源文件夹（用于当前风味下的config文件夹）
      */
-    def srcDir = 'src' + File.separator + FlavorUtil.getCurrentFlavor(this.project) + File.separator + 'config'
+    def srcDir = 'config'
 
     /**
      * 复制目标文件夹

@@ -1,7 +1,13 @@
 apply plugin: 'com.android.application'
 
-// 引用插件
-//apply plugin: 'configPlugin'
+// 引用插件 将当前风味下的[srcDir]文件夹中文件拷贝到根目录下[desDir]文件夹中
+apply plugin: 'configPlugin'
+configPlugin {
+    srcDir = 'config'
+    includePattern = '**/*.*'
+    excludePattern = '**/*.bak'
+    desDir = getRootDir().path + File.separator + 'config'
+}
 
 android {
     compileSdkVersion 26
@@ -12,6 +18,24 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions "mode"
+
+    productFlavors {
+        // 每一个flavor相当于defaultConfig，可以进行复写
+        mock {
+            dimension "mode"
+        }
+        prod {
+            dimension "mode"
+        }
+//        minApi19 {
+//            dimension "minApi"
+//        }
+//        minApi21 {
+//            dimension "minApi"
+//        }
     }
     buildTypes {
         release {
