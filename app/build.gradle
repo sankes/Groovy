@@ -1,20 +1,5 @@
 apply plugin: 'com.android.application'
 
-
-buildscript {
-
-    repositories {
-        // Gradle 插件的仓库 by shankes , delete this after adding to JCenter
-        maven {
-            url "https://dl.bintray.com/shankes/maven"
-        }
-    }
-    dependencies {
-        // Gradle config plugin by shankes
-        classpath 'com.shankes.gradle.plugin:configPlugin:1.0.0'
-    }
-}
-
 // 引用插件 将当前风味下的[srcDir]文件夹中文件拷贝到根目录下[desDir]文件夹中
 apply plugin: 'configPlugin'
 //configPlugin {
