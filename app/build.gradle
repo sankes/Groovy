@@ -1,22 +1,44 @@
 apply plugin: 'com.android.application'
 
-// 引用插件 将当前风味下的[srcDir]文件夹中文件拷贝到根目录下[desDir]文件夹中
-apply plugin: 'configPlugin'
-configPlugin {
-    srcDir = 'config'
-    includePattern = '**/*.*'
-    excludePattern = '**/*.bak'
-    desDir = getRootDir().path + File.separator + 'config'
+
+buildscript {
+
+    repositories {
+        // Gradle 插件的仓库 by shankes , delete this after adding to JCenter
+        maven {
+            url "https://dl.bintray.com/shankes/maven"
+        }
+    }
+    dependencies {
+        // Gradle config plugin by shankes
+        classpath 'com.shankes.gradle.plugin:configPlugin:1.0.0'
+    }
 }
 
+// 引用插件 将当前风味下的[srcDir]文件夹中文件拷贝到根目录下[desDir]文件夹中
+apply plugin: 'configPlugin'
+//configPlugin {
+//    srcDir = 'config'
+//    includePattern = '**/*.*'
+//    excludePattern = '**/*.bak'
+//    desDir = getRootDir().path + File.separator + 'config'
+//}
+
+// 简化引入包名，定义为config
+def config = rootProject.ext.android
+// 简化引入包名，定义为appConfig
+def appConfig = rootProject.ext.appConfig
+
 android {
-    compileSdkVersion 26
+    //在android 标签下,唯一的属性就是compileSdkVersion,buildToolsVersion
+    compileSdkVersion config.compileSdkVersion
+    buildToolsVersion config.buildToolsVersion
     defaultConfig {
-        applicationId "com.shankes.groovy.demo"
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        applicationId appConfig.applicationId
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
+        versionCode appConfig.versionCode
+        versionName appConfig.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,10 +59,47 @@ android {
 //            dimension "minApi"
 //        }
     }
-    buildTypes {
+    // 应用签名配置
+    signingConfigs {
+        // debug版本的签名配置,通常不用配，因为有默认的debug签名
+        debug {}
         release {
-            minifyEnabled false
+            File keyFile = new File(getRootDir().path + File.separator + "config" + File.separator + "shankes.jks")
+            storeFile keyFile
+
+            storePassword appConfig.keyStorePassword
+            keyAlias appConfig.keyAlias
+            keyPassword appConfig.keyPassword
+        }
+    }
+    buildTypes {
+        debug {
+            // 这里是在 applicationId 中添加了一个后缀。所以『.』要加上
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                //设置支持的SO库架构
+                abiFilters "armeabi", "armeabi-v7a", "x86"
+            }
+        }
+        //这里的名字自定义，不要求大小写
+        preview.initWith(buildTypes.release)
+        release {
+            // 这里是在 applicationId 中添加了一个后缀。所以『.』要加上
+            // applicationIdSuffix ".release"
+            signingConfig signingConfigs.release
+            // 开启混淆
+            minifyEnabled true
+//            debuggable true
+            // 是否启用zipAlign压缩
+            zipAlignEnabled true
+            // 自动移除不用资源
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                // 设置支持的SO库架构
+                abiFilters "armeabi", "armeabi-v7a", "x86"
+            }
         }
     }
 }

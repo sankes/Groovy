@@ -17,9 +17,32 @@
             classpath 'com.shankes.gradle.plugin:config:1.0.0'
         }
     }
+#####添加远程仓库依赖,在项目build中间中，修改buildScript
+    buildscript {
+    
+        repositories {
+            ...
+            // Gradle 插件的仓库 by shankes , delete this after adding to JCenter
+            maven {
+                  url "https://dl.bintray.com/shankes/maven"
+            }
+        }
+        dependencies {
+            ...
+            // Gradle config plugin by shankes
+            classpath 'com.shankes.gradle.plugin:configPlugin:1.0.0'
+        }
+    }
 
-###引用插件
-apply plugin: 'configPlugin'
+###引用插件，在需要使用的模块build文件中直接添加以下内容即可
+    apply plugin: 'configPlugin'
+    // 以下传参内容可以省略，使用默认配置
+    configPlugin {
+        srcDir = 'config'
+        includePattern = '**/*.*'
+        excludePattern = '**/*.bak'
+        desDir = getRootDir().path + File.separator + 'config'
+    }
 
 ###发布插件产生错误
 upload fails with "Failed to resolve package name" (daemon caching issues?)

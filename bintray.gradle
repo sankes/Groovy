@@ -1,5 +1,4 @@
 // 上传插件到jcenter，在插件模块的build文件中引入即可
-
 apply plugin: 'maven-publish'
 
 //源代码打包任务
@@ -55,10 +54,11 @@ def siteUrl = 'https://github.com/sankes/Groovy'   // project homepage
 def issueUrl = 'https://github.com/sankes/Groovy/issues'
 def gitUrl = 'https://github.com/sankes/Groovy.git'
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+// 简化引入包名，定义为properties
+Properties properties = rootProject.ext.properties
 
 bintray {
+    // 本地文件中获取上传到JCenter所需信息
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
     //上传的内容
